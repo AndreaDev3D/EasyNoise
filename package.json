@@ -1,0 +1,18 @@
+{
+  "name":"com.andreadev3d.easynoise",
+  "version": "1.0.0",
+  "displayName": "Easy Noise",
+  "description": "A free library to fast iterate with noise and noise image productions.",
+  "unity": "2021.3",
+  "author": {
+    "name": "AndreaDev3d",
+    "url": "https://andreadev3d.com/"
+  },
+  "dependencies": {
+	  "com.unity.mathematics": "1.2.6",
+  },
+  "keywords": [
+    "PerlinNoise",
+    "Noise",
+  ]
+}
