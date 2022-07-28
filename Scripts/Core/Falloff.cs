@@ -6,6 +6,35 @@ namespace EasyNoise.Core
 {
     public static class Falloff
     {
+        public static Noise FallHorizontal(this Noise noise, Easings.EasingType easingType = Easings.EasingType.Easelinear)
+        {
+            var easing = Easings.GetEasing(easingType);
+            for (int x = 0; x < noise.Width; x++)
+            {
+                for (int y = 0; y < noise.Height; y++)
+                {
+                    var result = Mathf.InverseLerp(0, noise.Height, y);
+                    noise.Data[x, y] = easing.Evaluate(result);
+                }
+            }
+
+            return noise;
+        }
+        public static Noise FallVertical(this Noise noise, Easings.EasingType easingType = Easings.EasingType.Easelinear)
+        {
+            var easing = Easings.GetEasing(easingType);
+            for (int x = 0; x < noise.Width; x++)
+            {
+                for (int y = 0; y < noise.Height; y++)
+                {
+                    var result = Mathf.InverseLerp(0, noise.Width, x);
+                    noise.Data[x, y] = easing.Evaluate(result);
+                }
+            }
+
+            return noise;
+        }
+
         public static Noise FalloffSimple(this Noise noise, float powerA = 3f, float powerB = 2.2f, Easings.EasingType easingType = Easings.EasingType.Easelinear)
         {
             var easing = Easings.GetEasing(easingType);
@@ -24,6 +53,7 @@ namespace EasyNoise.Core
 
             return noise;
         }
+
         public static Noise FalloffRadial(this Noise noise, float radius, Easings.EasingType easingType = Easings.EasingType.Easelinear)
         {
             var easing = Easings.GetEasing(easingType);
@@ -45,35 +75,7 @@ namespace EasyNoise.Core
             return noise;
         }
 
-        // https://stackoverflow.com/questions/69725525/unity-how-to-create-circular-gradient
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="value">The calculated value to process</param>
-        /// <param name="radius">The distance from center to calculate falloff distance</param>
-        /// <param name="cx">The x-coordinate of the center position</param>
-        /// <param name="cy">The y-coordinate of the center position</param>
-        /// <returns></returns>
-        public static Noise FalloffSolidRadial(this Noise noise, float radius, Easings.EasingType easingType = Easings.EasingType.Easelinear)
-        {
-            var easing = Easings.GetEasing(easingType);
-            for (int x = 0; x < noise.Width; x++)
-            {
-                for (int y = 0; y < noise.Height; y++)
-                {
-                    float cx = noise.Width / 2f;
-                    float cy = noise.Height / 2f;
-                    float dx = cx - x;
-                    float dy = cy - y;
-                    float distSqr = dx * dx + dy * dy;
-                    float radSqr = radius * radius;
-
-                    noise.Data[x, y] = distSqr >= radSqr ? easing.Evaluate(1f) : 0f;
-                }
-            }
-
-            return noise;
-        }
+        // https://stackoverflow.com/questions/69725525/unity-how-to-create-circular-gradient        
 
         /// <summary>
         /// 

@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace EasyNoise.Data
 {
+    [Serializable]
     public struct Noise
     {
         public int Width;

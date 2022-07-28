@@ -5,7 +5,6 @@ namespace EasyNoise.Core
 {
     public static class Generator
     {
-
         public static Noise PerlinNoise(this Noise noise, float scale, float xOrg = 0, float yOrg = 0)
         {
             for (int x = 0; x < noise.Width; x++) 
