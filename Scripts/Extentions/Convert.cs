@@ -51,7 +51,39 @@ namespace EasyNoise.Extensions
             return noise;
         }
 
-        public static Color[] ToColorArray(this Noise noise)
+        public static Texture2D ToTexture(this Noise noise, string name = "", Gradient gradient = null, FilterMode filterMode = FilterMode.Point, TextureWrapMode textureWrapMode = TextureWrapMode.Clamp)
+        {
+            var _textureStep = new Texture2D(noise.Width, noise.Height);
+
+            if (gradient == null)
+                _textureStep.SetPixels(noise.ToGrayscale());
+            else
+                _textureStep.SetPixels(noise.ToGradient(gradient));
+
+            _textureStep.Apply();
+            _textureStep.wrapMode = textureWrapMode;
+            _textureStep.filterMode = filterMode;
+            _textureStep.name = name;
+            _textureStep.Apply();
+
+            return _textureStep;
+        }
+
+        public static Color[] ToGradient(this Noise noise, Gradient gradient)
+        {
+            var convertedList = new List<Color>();
+
+            for (int x = 0; x < noise.Width; x++)
+            {
+                for (int y = 0; y < noise.Height; y++)
+                {
+                    var result = gradient.Evaluate(noise.Data[x, y]);
+                    convertedList.Add(result);
+                }
+            }
+            return convertedList.ToArray();
+        }
+        public static Color[] ToGrayscale(this Noise noise, Gradient gradient = null)
         {
             var convertedList = new List<Color>();
 
