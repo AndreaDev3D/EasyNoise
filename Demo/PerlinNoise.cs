@@ -2,6 +2,7 @@ using EasyNoise.Core;
 using EasyNoise.Data;
 using EasyNoise.Easing.Core;
 using EasyNoise.Extensions;
+using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,7 +12,8 @@ namespace EasyNoise.Demo
     public class PerlinNoise : MonoBehaviour
     {
         public int2 NoiseSize;
-        [Header("Perlin Noise")]
+        public bool AutoUpdate;
+        [Header("Simple Noise")]
         public bool HasNoise;
         public float NoiseScale;
         public float OriginX, OriginY;
@@ -21,13 +23,13 @@ namespace EasyNoise.Demo
 
         [Header("FallOff Noise")]
         public bool HasFalloff;
-        public float PowerA = 3f;
-        public float PowerB = 2.2f;
         public float Radius = 256f;
         public Easings.EasingType EasingType;
+        public Gradient Gradient;
 
         public Noise m_NoiseMap;
         public Noise m_FalloffMap;
+        public List<Noise> m_FalloffMaps;
 
         [Header("Texture Noise")]
         public Texture2D m_Texture;
@@ -37,6 +39,7 @@ namespace EasyNoise.Demo
 
         private void OnValidate()
         {
+            if (!AutoUpdate) return;
             ValidateNoise();
             Generate();
         }
@@ -53,7 +56,7 @@ namespace EasyNoise.Demo
         {
             if (HasNoise) 
             {
-                m_NoiseMap.PerlinNoise(NoiseScale, OriginX, OriginY);
+                m_NoiseMap.SimpleNoise(NoiseScale,xOrg:OriginX, yOrg:OriginY);
 
                 if (HasNoiseStep)
                 {
@@ -63,18 +66,20 @@ namespace EasyNoise.Demo
             
             if (HasFalloff)
             {
-                //m_FalloffMap.FalloffSimple(PowerA, PowerB, EasingType);
                 m_FalloffMap.FalloffRadial(Radius, EasingType);
-                //m_FalloffMap.FalloffSolidRadial(Radius, EasingType);
 
-                if (HasNoiseStep)
+                if (HasNoiseStep) 
+                { 
                     m_FalloffMap.ToStep(NoiseStep);
+                }
 
                 if (HasNoise)
+                {
                     m_NoiseMap.Subtract(m_FalloffMap);
+                }
             }
 
-            m_Texture = (HasNoise ? m_NoiseMap : m_FalloffMap).ToTexture("Perlin", filterMode:FilterMode.Bilinear);
+            m_Texture = (HasNoise ? m_NoiseMap : m_FalloffMap).ToTexture("Perlin", Gradient, filterMode:FilterMode.Bilinear);
             RawImage.texture = m_Texture;
         }
     }
